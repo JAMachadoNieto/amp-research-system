@@ -112,7 +112,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="1e" green="28" red="29" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Standar"/>
+            <Property name="text" type="java.lang.String" value="Consultor"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="enterButton">
@@ -172,7 +172,7 @@
               <Color blue="1e" green="28" red="29" type="rgb"/>
             </Property>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Curator"/>
+            <Property name="text" type="java.lang.String" value="Curador"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="curatorSelectionButtonActionPerformed"/>

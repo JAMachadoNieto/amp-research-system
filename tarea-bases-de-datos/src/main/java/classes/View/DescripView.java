@@ -7,10 +7,9 @@ package classes.View;
 import classes.Peptido;
 import java.awt.Image;
 import java.util.ArrayList;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.ListModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -22,32 +21,29 @@ public class DescripView extends javax.swing.JFrame {
 
     /**
      * Creates new form DescripView
+     * @param user
+     * @param pepList
      */
-    public DescripView(String user) {
+    public DescripView(String user, ArrayList<Peptido> pepList) {
         initComponents();
+        setTableModel(pepList);
+        
+        this.pepList=pepList;
         this.user = user;
-        if(user == "standart"){
+        
+        if("consultor".equals(user)){
             tittleLabel.setText("   Visualizador de Datos de Peptidos");
-            deleteButton.setVisible(false);
-            editButton.setVisible(false);
+            addButton.setVisible(false);
         } else {
             tittleLabel.setText("   Editor de datos de Peptidos");
         }
-        DefaultListModel<Peptido> model = new DefaultListModel<>();
-        for(Peptido pep: pepList){
-            model.addElement(pep);
-        }
-        pepListComp.setModel((ListModel)model);
         
-        Icon  i = deleteButton.getIcon();
+        Icon  i = addButton.getIcon();
         ImageIcon icon = (ImageIcon)i;
-        Image image = icon.getImage().getScaledInstance(deleteButton.getWidth(), deleteButton.getHeight(), Image.SCALE_SMOOTH);
-        deleteButton.setIcon(new ImageIcon(image));
+        Image image = icon.getImage().getScaledInstance(addButton.getWidth(), addButton.getHeight(), Image.SCALE_SMOOTH);
+        addButton.setIcon(new ImageIcon(image));
         
-        i = editButton.getIcon();
-        icon = (ImageIcon)i;
-        image = icon.getImage().getScaledInstance(editButton.getWidth(), editButton.getHeight(), Image.SCALE_SMOOTH);
-        editButton.setIcon(new ImageIcon(image));
+        
     }
 
     /**
@@ -60,12 +56,11 @@ public class DescripView extends javax.swing.JFrame {
     private void initComponents() {
 
         MainPanel = new javax.swing.JPanel();
-        listScrollPanel = new javax.swing.JScrollPane();
-        pepListComp = new javax.swing.JList<>();
         TopPanel = new javax.swing.JPanel();
         tittleLabel = new javax.swing.JLabel();
-        deleteButton = new javax.swing.JToggleButton();
-        editButton = new javax.swing.JToggleButton();
+        addButton = new javax.swing.JToggleButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        pepListTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(231, 212, 187));
@@ -73,29 +68,20 @@ public class DescripView extends javax.swing.JFrame {
         MainPanel.setBackground(new java.awt.Color(133, 120, 97));
         MainPanel.setForeground(new java.awt.Color(16, 18, 17));
 
-        pepListComp.setBackground(new java.awt.Color(231, 212, 187));
-        pepListComp.setForeground(new java.awt.Color(41, 40, 30));
-        pepListComp.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        pepListComp.setSelectionBackground(new java.awt.Color(231, 251, 255));
-        listScrollPanel.setViewportView(pepListComp);
-
         TopPanel.setBackground(new java.awt.Color(231, 212, 187));
 
+        tittleLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         tittleLabel.setText("   Visualizador de Datos de Peptidos");
 
-        deleteButton.setBackground(new java.awt.Color(231, 212, 187));
-        deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/papelera_icon.jpg"))); // NOI18N
-        deleteButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(133, 120, 97), 3));
-        deleteButton.addActionListener(this::deleteButtonActionPerformed);
-
-        editButton.setBackground(new java.awt.Color(231, 212, 187));
-        editButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/lapiz_icon.png"))); // NOI18N
-        editButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(133, 120, 97), 3));
-        editButton.addActionListener(this::editButtonActionPerformed);
+        addButton.setBackground(new java.awt.Color(231, 212, 187));
+        addButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/add_icon_no_bg.png"))); // NOI18N
+        addButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(133, 120, 97), 3));
+        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addButtonMouseClicked(evt);
+            }
+        });
+        addButton.addActionListener(this::addButtonActionPerformed);
 
         javax.swing.GroupLayout TopPanelLayout = new javax.swing.GroupLayout(TopPanel);
         TopPanel.setLayout(TopPanelLayout);
@@ -103,21 +89,39 @@ public class DescripView extends javax.swing.JFrame {
             TopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TopPanelLayout.createSequentialGroup()
                 .addComponent(tittleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 333, Short.MAX_VALUE)
+                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         TopPanelLayout.setVerticalGroup(
             TopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TopPanelLayout.createSequentialGroup()
-                .addGroup(TopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(TopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(tittleLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(editButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(TopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(tittleLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
+
+        pepListTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "id", "Nombre", "Secuencia", "Longitud", "Peso", "Carga Neta", "Hidrofobicidad", "Es Natural", "Estado de Verificacion", "Organismo Fuente"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(pepListTable);
 
         javax.swing.GroupLayout MainPanelLayout = new javax.swing.GroupLayout(MainPanel);
         MainPanel.setLayout(MainPanelLayout);
@@ -126,8 +130,8 @@ public class DescripView extends javax.swing.JFrame {
             .addGroup(MainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(MainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(listScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
-                    .addComponent(TopPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(TopPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         MainPanelLayout.setVerticalGroup(
@@ -135,8 +139,8 @@ public class DescripView extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(TopPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(listScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -155,13 +159,40 @@ public class DescripView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_deleteButtonActionPerformed
+    }//GEN-LAST:event_addButtonActionPerformed
 
-    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_editButtonActionPerformed
+    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
+        AddPeptidoDialog aPD = new AddPeptidoDialog(this, true);
+        aPD.setVisible(true);
+        setTableModel(pepList);
+    }//GEN-LAST:event_addButtonMouseClicked
+    private void setTableModel(ArrayList<Peptido> pepList){
+        DefaultTableModel model = new DefaultTableModel();
+        
+        model.setColumnIdentifiers(new Object[]{
+            "ID", "Secuencia", "Nombre", "Longitud",
+            "Peso molecular", "Carga neta", "Hidrofobicidad",
+            "Natural", "Verificación", "Organismo fuente"
+        });
+
+        for (Peptido p : pepList) {
+            model.addRow(new Object[]{
+                p.id,
+                p.secuencia,
+                p.nombre_principal,
+                p.longitud,
+                p.peso_molecular,
+                p.carga_neta,
+                p.hidrofobicidad,
+                p.es_natural,
+                p.estado_verificacion,
+                p.organismo_fuente  // si es null se verá vacío
+            });
+        }
+        pepListTable.setModel(model);
+    }
 
     /**
      * @param args the command line arguments
@@ -189,16 +220,16 @@ public class DescripView extends javax.swing.JFrame {
 //            new DescripView(user).setVisible(true);
 //        });
     }
-
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel MainPanel;
     private javax.swing.JPanel TopPanel;
-    private javax.swing.JToggleButton deleteButton;
-    private javax.swing.JToggleButton editButton;
-    private javax.swing.JScrollPane listScrollPanel;
-    private javax.swing.JList<String> pepListComp;
+    private javax.swing.JToggleButton addButton;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable pepListTable;
     private javax.swing.JLabel tittleLabel;
     // End of variables declaration//GEN-END:variables
     private ArrayList<Peptido> pepList = new ArrayList<>();
-    private String user = null;
+    private String user;
 }

@@ -8,10 +8,6 @@ import classes.Peptido;
 import classes.DBManagment.DBManager;
 import classes.View.DescripView;
 import java.awt.Image;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -62,7 +58,7 @@ public class TareaBasesDeDatos extends javax.swing.JFrame {
 
         loginButtonGroup.add(standartSelectionButton);
         standartSelectionButton.setForeground(new java.awt.Color(41, 40, 30));
-        standartSelectionButton.setText("Standar");
+        standartSelectionButton.setText("Consultor");
 
         enterButton.setBackground(new java.awt.Color(133, 120, 97));
         enterButton.setFont(new java.awt.Font("Consolas", 0, 28)); // NOI18N
@@ -90,7 +86,7 @@ public class TareaBasesDeDatos extends javax.swing.JFrame {
         loginButtonGroup.add(curatorSelectionButton);
         curatorSelectionButton.setForeground(new java.awt.Color(41, 40, 30));
         curatorSelectionButton.setSelected(true);
-        curatorSelectionButton.setText("Curator");
+        curatorSelectionButton.setText("Curador");
         curatorSelectionButton.addActionListener(this::curatorSelectionButtonActionPerformed);
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
@@ -164,8 +160,8 @@ public class TareaBasesDeDatos extends javax.swing.JFrame {
     }//GEN-LAST:event_enterButtonMouseClicked
 
     private void enterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enterButtonActionPerformed
-        String user = (standartSelectionButton.isSelected())? "standart" : "curator";
-        DescripView dv = new DescripView(user);
+        String user = (standartSelectionButton.isSelected())? "consultor" : "curador";
+        DescripView dv = new DescripView(user, pepList);
         dv.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_enterButtonActionPerformed
@@ -192,6 +188,13 @@ public class TareaBasesDeDatos extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        pepList = new ArrayList<>();
+        DBManager dbMan = new DBManager();
+        dbMan.FillPepArray(pepList);
+        
+//        for(int i=0; i<pepList.size()*(0.05); i++){
+//            System.out.println(pepList.get(i).nombre_principal + " -> " + pepList.get(i).organismo_fuente);
+//        }
         
         java.awt.EventQueue.invokeLater(() -> new TareaBasesDeDatos().setVisible(true));
         
@@ -208,4 +211,5 @@ public class TareaBasesDeDatos extends javax.swing.JFrame {
     private javax.swing.JRadioButton standartSelectionButton;
     private javax.swing.JLabel tittleText;
     // End of variables declaration//GEN-END:variables
+    private static ArrayList<Peptido> pepList;
 }
