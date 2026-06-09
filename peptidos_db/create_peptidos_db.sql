@@ -53,7 +53,7 @@ COMMENT ON TABLE FUENTE_ORGANISMO IS 'Organismos productores de los péptidos (o
 CREATE TABLE PÉPTIDO (
     id SERIAL PRIMARY KEY,
     secuencia TEXT NOT NULL UNIQUE,
-    nombre_principal VARCHAR(200),
+    nombre_principal VARCHAR(200) NOT NULL,
     longitud SMALLINT NOT NULL,
     peso_molecular DECIMAL(10,2),
     carga_neta SMALLINT,
