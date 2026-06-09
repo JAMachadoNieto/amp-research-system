@@ -17,4 +17,5 @@
             <version>42.7.5</version>
         </dependency>
     </dependencies>
+    <name>Péptidos_DB</name>
 </project>
